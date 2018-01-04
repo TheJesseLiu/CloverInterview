@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>Get All Items</title>
+
+  </head>
+	<body>
+	<button type="button" onClick = "create()">Create Item! </button>
+	
+
+	<ol id="items">
+
+	</ol>		
+
+    <script type="text/javascript">
+	    window.onload = function () {
+	    	fetch('http://localhost:3000/item/')
+	    	.then(function(response) {
+	  			return response.json();
+			})
+			.then(function(response){
+				renderItemList("items", response);
+			});
+		}
+		function renderItemList(items_id, item_set){
+		    for (let key in item_set) {
+		    	addItemToList(key, item_set[key].amount, items_id);
+			}
+		}
+		function addItemToList(key, amount, items_id){
+			let ol = document.getElementById(items_id);
+    		let li = document.createElement("LI");
+    		li.innerHTML= key+" "+amount;
+    		ol.appendChild(li);
+		}
+		function create(){
+			var amount = prompt("Please enter amount");
+			if (amount != null) {
+		    fetch('http://localhost:3000/item', {
+		      method: "POST",
+		      headers: {
+		        'Accept': 'application/json',
+		        'Content-Type': 'application/json'
+		      },
+		      body: JSON.stringify({"amount":amount})
+		    }).then((res) => {
+		      return res.json();
+
+		    }).then((res) => {
+		      console.log("this is res", res)
+		      addItemToList(res.item_id, res.amount, "items");
+
+		    }).catch((err) => {
+		      console.log(err)
+		    })
+			}
+
+
+		
+		}
+    </script>
+
+	</body>
+</html>
